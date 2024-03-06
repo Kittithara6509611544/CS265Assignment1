@@ -12,35 +12,35 @@ public:
     string name;
     int h;
 
-    struct adjecent {
+    struct adjacent {
         Node* node;
         int weight;
     };
-    vector<adjecent> adj;
+    vector<adjacent> adj;
 
     Node(string name, int h){
         this->name = name;
         this->h = h;
     }
     
-	static bool comparator(const adjecent &a, const adjecent &b) {
+	static bool comparator(const adjacent &a, const adjacent &b) {
     	return a.node->name > b.node->name;
 	}
 	static bool comparatorForNode(const Node* a, const Node* b) {
     	return a->name > b->name;
 	}
 	struct comp4PQueue{
-		bool operator()(const adjecent &a, const adjecent &b){
+		bool operator()(const adjacent &a, const adjacent &b){
 		return a.weight > b.weight;
 		}
 	};
 	struct comp4Greedy{
-		bool operator()(const adjecent &a, const adjecent &b){
+		bool operator()(const adjacent &a, const adjacent &b){
 		return a.node->h > b.node->h;
 		}
 	};
 	struct comp4aStar{
-		bool operator()(const adjecent &a, const adjecent &b){
+		bool operator()(const adjacent &a, const adjacent &b){
 			if(a.weight+a.node->h == b.weight+b.node->h) return a.node->name > b.node->name;
 		else return a.weight+a.node->h > b.weight+b.node->h;
 		}
@@ -48,7 +48,7 @@ public:
 
 
     void addAdj(Node* node, int weight){
-        adjecent a;
+        adjacent a;
         a.node = node;
         a.weight = weight;
         adj.push_back(a);
@@ -69,7 +69,7 @@ public:
     		next = stack.back();
     		visited.push_back(next->name);
     		stack.pop_back();
-    		for(adjecent x: next->adj){
+    		for(adjacent x: next->adj){
     			if(find(visited.begin(), visited.end(), x.node->name) != visited.end()) continue;
     			stack.push_back(x.node);
 			}
@@ -99,7 +99,7 @@ public:
     		cout << " -> " << queue.front()->name;
     		queue.pop();
     		visited.push_back(next->name);
-    		for(adjecent x: next->adj){
+    		for(adjacent x: next->adj){
     			if(find(visited.begin(), visited.end(), x.node->name) != visited.end()) continue;
     			queue.push(x.node);
 			}
@@ -116,9 +116,9 @@ public:
 	void uniformCost(Node* goal){
 		int count = 0, sum = 0;
 		Node* next = nullptr;
-		priority_queue<adjecent, vector<adjecent>, comp4PQueue> pq;
+		priority_queue<adjacent, vector<adjacent>, comp4PQueue> pq;
 		vector<string> visited;
-		for(adjecent x: adj){
+		for(adjacent x: adj){
 			pq.push(x);
 			visited.push_back(x.node->name);
 		}
@@ -130,7 +130,7 @@ public:
 			pq.pop();
 			cout << " -> " << next->name;
     		visited.push_back(next->name);
-			for(adjecent x: next->adj){
+			for(adjacent x: next->adj){
     			if(find(visited.begin(), visited.end(), x.node->name) != visited.end()) continue;
     			pq.push(x);
 			}
@@ -147,9 +147,9 @@ public:
 	void greedyBestFirst(Node* goal){
 		int count = 0, sum = 0;
 		Node* next = nullptr;
-		priority_queue<adjecent, vector<adjecent>, comp4Greedy> pq;
+		priority_queue<adjacent, vector<adjacent>, comp4Greedy> pq;
 		vector<string> visited;
-		for(adjecent x: adj){
+		for(adjacent x: adj){
 			pq.push(x);
 			visited.push_back(x.node->name);
 		}
@@ -161,7 +161,7 @@ public:
 			pq.pop();
 			cout << " -> " << next->name;
     		visited.push_back(next->name);
-			for(adjecent x: next->adj){
+			for(adjacent x: next->adj){
     			if(find(visited.begin(), visited.end(), x.node->name) != visited.end()) continue;
     			pq.push(x);
 			}
@@ -178,9 +178,9 @@ public:
 	void aStar(Node* goal){
 		int count = 0, sum = 0;
 		Node* next = nullptr;
-		priority_queue<adjecent, vector<adjecent>, comp4aStar> pq;
+		priority_queue<adjacent, vector<adjacent>, comp4aStar> pq;
 		vector<string> visited;
-		for(adjecent x: adj){
+		for(adjacent x: adj){
 			pq.push(x);
 			visited.push_back(x.node->name);
 		}
@@ -192,7 +192,7 @@ public:
 			pq.pop();
 			cout << " -> " << next->name;
     		visited.push_back(next->name);
-			for(adjecent x: next->adj){
+			for(adjacent x: next->adj){
     			if(find(visited.begin(), visited.end(), x.node->name) != visited.end()) continue;
     			pq.push(x);
 			}
