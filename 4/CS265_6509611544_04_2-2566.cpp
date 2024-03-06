@@ -39,8 +39,8 @@ public:
     	int count=0;
     	vector<Node*> stack;
     	vector<string> visited;
-    	Node* next;
     	stack.push_back(this->adj.back().node);
+    	Node* next = stack.back();
     	visited.push_back(stack.back()->name);
     	cout << "Depth-First Search from " << this->name << " to " << goal->name << endl;
     	cout << this->name;
@@ -59,15 +59,17 @@ public:
 				break;
 			}
 		}
+		cout << endl << "Done Depth-First Search" << endl << endl;
 	} // End of Depth-First
 	
 	void breadthFirst(Node* goal){
     	int count=0;
     	queue<Node*> queue;
     	vector<string> visited;
-    	Node* next;
+    	for(string c: visited) cout << c << endl;
     	queue.push(this->adj.back().node);
-    	visited.push_back(queue.back()->name);
+    	Node* next = queue.front();
+    	visited.push_back(queue.front()->name);
     	cout << "Breadth-First Search from " << this->name << " to " << goal->name << endl;
     	cout << this->name;
     	while(next != goal){
@@ -119,6 +121,7 @@ int main() {
 	h->addAdj(d, 4);
 	
 	s->depthFirst(f);
+	s->breadthFirst(f);
     
     return 0;
 }
