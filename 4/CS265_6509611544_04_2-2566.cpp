@@ -26,6 +26,14 @@ public:
 	static bool comparator(const adjecent &a, const adjecent &b) {
     	return a.node->name > b.node->name;
 	}
+	static bool comparatorForNode(const Node* a, const Node* b) {
+    	return a->name > b->name;
+	}
+	struct comp4PQueue{
+		bool operator()(const adjecent &a, const adjecent &b){
+		return a.weight > b.weight;
+		}
+	};
     
     void addAdj(Node* node, int weight){
         adjecent a;
@@ -42,7 +50,7 @@ public:
     	stack.push_back(this->adj.back().node);
     	Node* next = stack.back();
     	visited.push_back(stack.back()->name);
-    	cout << "Depth-First Search from " << this->name << " to " << goal->name << endl;
+    	printf("Depth-First Search from %s to %s\n", this->name.c_str(), goal->name.c_str());
     	cout << this->name;
     	while(next != goal){
     		cout << " -> " << stack.back()->name;
@@ -71,24 +79,58 @@ public:
     		visited.push_back(adj[x].node->name);
 		}
     	Node* next = nullptr;
-    	cout << "Breadth-First Search from " << this->name << " to " << goal->name << endl;
+    	printf("\nBreadth-First Search from %s to %s\n", this->name.c_str(), goal->name.c_str());
     	cout << this->name;
     	while(next != goal){
     		next = queue.front();
+    		auto back = &queue.back();
+    		cout << " -> " << queue.front()->name;
+    		queue.pop();
+    		visited.push_back(next->name);
     		for(adjecent x: next->adj){
     			if(find(visited.begin(), visited.end(), x.node->name) != visited.end()) continue;
     			queue.push(x.node);
-    			visited.push_back(x.node->name);
 			}
-    		cout << " -> " << queue.front()->name;
-    		queue.pop();
+			sort(back, &queue.back(), comparatorForNode);
 			count++;
 			if(count >= 30){
 				cout << endl << "No solution Founded" << endl;
 				break;
 			}
 		}
+		cout << endl << "Done Breadth-First Search" << endl << endl;
 	} // End of Breadth-First
+	
+	void uniformCost(Node* goal){
+		int count = 0, sum = 0;
+		Node* next = nullptr;
+		priority_queue<adjecent, vector<adjecent>, comp4PQueue> pq;
+		vector<string> visited;
+		for(adjecent x: adj){
+			pq.push(x);
+			visited.push_back(x.node->name);
+		}
+		printf("\nUniform Cost Search from %s to %s\n", this->name.c_str(), goal->name.c_str());
+    	cout << this->name;
+		while(!pq.empty()){
+			next = pq.top().node;
+			sum += pq.top().weight;
+			pq.pop();
+			cout << " -> " << next->name;
+    		visited.push_back(next->name);
+			for(adjecent x: next->adj){
+    			if(find(visited.begin(), visited.end(), x.node->name) != visited.end()) continue;
+    			pq.push(x);
+			}
+			if(next == goal) break;
+			count++;
+			if(count >= 30){
+				cout << endl << "No solution Founded" << endl;
+				break;
+			}
+		}
+		cout << endl << "Done Uniform Cost Search with " << sum << " cost(s)" << endl;
+	} // End of Uniform Cost
 
 };
 
@@ -121,8 +163,9 @@ int main() {
 	h->addAdj(a, 4);
 	h->addAdj(d, 4);
 	
-	s->depthFirst(f);
-	s->breadthFirst(f);
+	s->depthFirst(f); 	// Expected Output: S -> A -> C -> B -> D -> E -> F
+	s->breadthFirst(f); // Expected Output: S -> A -> B -> C -> G -> D -> H -> E -> F
+	s->uniformCost(f);	// Expected Output: S -> B -> A -> G -> C -> H -> D -> E -> F, Sum = 24
     
     return 0;
 }
