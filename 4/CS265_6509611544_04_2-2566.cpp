@@ -34,7 +34,19 @@ public:
 		return a.weight > b.weight;
 		}
 	};
-    
+	struct comp4Greedy{
+		bool operator()(const adjecent &a, const adjecent &b){
+		return a.node->h > b.node->h;
+		}
+	};
+	struct comp4aStar{
+		bool operator()(const adjecent &a, const adjecent &b){
+			if(a.weight+a.node->h == b.weight+b.node->h) return a.node->name > b.node->name;
+		else return a.weight+a.node->h > b.weight+b.node->h;
+		}
+	};
+
+
     void addAdj(Node* node, int weight){
         adjecent a;
         a.node = node;
@@ -129,8 +141,70 @@ public:
 				break;
 			}
 		}
-		cout << endl << "Done Uniform Cost Search with " << sum << " cost(s)" << endl;
+		cout << endl << "Done Uniform Cost Search with " << sum << " cost(s)" << endl << endl;
 	} // End of Uniform Cost
+	
+	void greedyBestFirst(Node* goal){
+		int count = 0, sum = 0;
+		Node* next = nullptr;
+		priority_queue<adjecent, vector<adjecent>, comp4Greedy> pq;
+		vector<string> visited;
+		for(adjecent x: adj){
+			pq.push(x);
+			visited.push_back(x.node->name);
+		}
+		printf("\nGreedy Best-First Search from %s to %s\n", this->name.c_str(), goal->name.c_str());
+    	cout << this->name;
+		while(!pq.empty()){
+			next = pq.top().node;
+			sum += pq.top().weight;
+			pq.pop();
+			cout << " -> " << next->name;
+    		visited.push_back(next->name);
+			for(adjecent x: next->adj){
+    			if(find(visited.begin(), visited.end(), x.node->name) != visited.end()) continue;
+    			pq.push(x);
+			}
+			if(next == goal) break;
+			count++;
+			if(count >= 30){
+				cout << endl << "No solution Founded" << endl;
+				break;
+			}
+		}
+		cout << endl << "Done Greedy Best-First Search with " << sum << " cost(s)" << endl << endl;
+	} // End of Greedy Best-First
+	
+	void aStar(Node* goal){
+		int count = 0, sum = 0;
+		Node* next = nullptr;
+		priority_queue<adjecent, vector<adjecent>, comp4aStar> pq;
+		vector<string> visited;
+		for(adjecent x: adj){
+			pq.push(x);
+			visited.push_back(x.node->name);
+		}
+		printf("\nA* Search from %s to %s\n", this->name.c_str(), goal->name.c_str());
+    	cout << this->name;
+		while(!pq.empty()){
+			next = pq.top().node;
+			sum += pq.top().weight;
+			pq.pop();
+			cout << " -> " << next->name;
+    		visited.push_back(next->name);
+			for(adjecent x: next->adj){
+    			if(find(visited.begin(), visited.end(), x.node->name) != visited.end()) continue;
+    			pq.push(x);
+			}
+			if(next == goal) break;
+			count++;
+			if(count >= 30){
+				cout << endl << "No solution Founded" << endl;
+				break;
+			}
+		}
+		cout << endl << "Done A* Search with " << sum << " cost(s)" << endl << endl;
+	} // End of A*
 
 };
 
@@ -163,9 +237,11 @@ int main() {
 	h->addAdj(a, 4);
 	h->addAdj(d, 4);
 	
-	s->depthFirst(f); 	// Expected Output: S -> A -> C -> B -> D -> E -> F
-	s->breadthFirst(f); // Expected Output: S -> A -> B -> C -> G -> D -> H -> E -> F
-	s->uniformCost(f);	// Expected Output: S -> B -> A -> G -> C -> H -> D -> E -> F, Sum = 24
+	s->depthFirst(f); 		// Expected Output: S -> A -> C -> B -> D -> E -> F
+	s->breadthFirst(f); 	// Expected Output: S -> A -> B -> C -> G -> D -> H -> E -> F
+	s->uniformCost(f);		// Expected Output: S -> B -> A -> G -> C -> H -> D -> E -> F, sum = 24
+	s->greedyBestFirst(f); 	// Expected Output: S -> C -> H -> D -> F, sum = 15
+	s->aStar(f); 			// Expected Output: S -> A -> G -> D -> F, sum = 12
     
     return 0;
 }
