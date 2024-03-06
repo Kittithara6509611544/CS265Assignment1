@@ -36,7 +36,7 @@ public:
     }
     
     void depthFirst(Node* goal){
-    	int count=0;
+    	int count = 0;
     	vector<Node*> stack;
     	vector<string> visited;
     	stack.push_back(this->adj.back().node);
@@ -63,24 +63,25 @@ public:
 	} // End of Depth-First
 	
 	void breadthFirst(Node* goal){
-    	int count=0;
+    	int count = 0;
     	queue<Node*> queue;
     	vector<string> visited;
-    	for(string c: visited) cout << c << endl;
-    	queue.push(this->adj.back().node);
-    	Node* next = queue.front();
-    	visited.push_back(queue.front()->name);
+    	for(int x=adj.size()-1;x>=0;x--){
+    		queue.push(adj[x].node);
+    		visited.push_back(adj[x].node->name);
+		}
+    	Node* next = nullptr;
     	cout << "Breadth-First Search from " << this->name << " to " << goal->name << endl;
     	cout << this->name;
     	while(next != goal){
-    		cout << " -> " << queue.front()->name;
     		next = queue.front();
-    		visited.push_back(next->name);
-    		queue.pop();
     		for(adjecent x: next->adj){
     			if(find(visited.begin(), visited.end(), x.node->name) != visited.end()) continue;
     			queue.push(x.node);
+    			visited.push_back(x.node->name);
 			}
+    		cout << " -> " << queue.front()->name;
+    		queue.pop();
 			count++;
 			if(count >= 30){
 				cout << endl << "No solution Founded" << endl;
