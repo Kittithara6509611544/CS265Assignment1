@@ -239,7 +239,7 @@ int main() {
 	
 	s->depthFirst(f); 		// Expected Output: S -> A -> C -> B -> D -> E -> F
 	s->breadthFirst(f); 	// Expected Output: S -> A -> B -> C -> G -> D -> H -> E -> F
-	s->uniformCost(f);		// Expected Output: S -> B -> A -> G -> C -> H -> D -> E -> F, sum = 24
+	s->uniformCost(f);		// Expected Output: S -> B -> A -> G -> D -> E -> F, sum = 16
 	s->greedyBestFirst(f); 	// Expected Output: S -> C -> H -> D -> F, sum = 15
 	s->aStar(f); 			// Expected Output: S -> A -> G -> D -> F, sum = 12
     
