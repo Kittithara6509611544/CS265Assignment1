@@ -3,6 +3,7 @@
 #include <vector>
 #include <queue>
 #include <algorithm>
+#include <limits.h>
 
 using namespace std;
 
@@ -11,6 +12,8 @@ public:
 
     string name;
     int h;
+    int distance = INT_MAX;
+    vector<Node*> path;
 
     struct adjacent {
         Node* node;
@@ -32,6 +35,11 @@ public:
 	struct comp4PQueue{
 		bool operator()(const adjacent &a, const adjacent &b){
 		return a.weight > b.weight;
+		}
+	};
+	struct comp4PQueueDist{
+		bool operator()(const adjacent &a, const adjacent &b){
+		return a.node->distance > b.node->distance;
 		}
 	};
 	struct comp4Greedy{
@@ -114,34 +122,51 @@ public:
 	} // End of Breadth-First
 	
 	void uniformCost(Node* goal){
-		int count = 0, sum = 0;
+		int count = 0;
 		Node* next = nullptr;
-		priority_queue<adjacent, vector<adjacent>, comp4PQueue> pq;
+		priority_queue<adjacent, vector<adjacent>, comp4PQueueDist> pq;
 		vector<string> visited;
-		for(adjacent x: adj){
-			pq.push(x);
-			visited.push_back(x.node->name);
-		}
+		adjacent tmp;
+		tmp.node = this;
+		tmp.weight = 0;
+		this->distance = 0;
+		pq.push(tmp);
 		printf("\nUniform Cost Search from %s to %s\n", this->name.c_str(), goal->name.c_str());
-    	cout << this->name;
+    	
 		while(!pq.empty()){
 			next = pq.top().node;
-			sum += pq.top().weight;
 			pq.pop();
-			cout << " -> " << next->name;
-    		visited.push_back(next->name);
-			for(adjacent x: next->adj){
-    			if(find(visited.begin(), visited.end(), x.node->name) != visited.end()) continue;
-    			pq.push(x);
+			next->path.push_back(next);
+			visited.push_back(next->name);
+			
+			if(next == goal){ // Print path
+				for(Node* x: next->path){
+					cout << x->name;
+					if(x != goal) cout << " -> ";
+				}
+				goto out;
+			} // End print path
+			else{
+				for(adjacent x: next->adj){
+					if(x.weight + next->distance < x.node->distance){
+						x.node->distance = x.weight + next->distance;
+						if(find(visited.begin(), visited.end(), x.node->name) != visited.end()) continue;
+						pq.push(x);
+						for(Node* y: next->path){
+							x.node->path.push_back(y);
+						}
+					}
+				}
 			}
-			if(next == goal) break;
+			
 			count++;
 			if(count >= 30){
 				cout << endl << "No solution Founded" << endl;
 				break;
 			}
 		}
-		cout << endl << "Done Uniform Cost Search with " << sum << " cost(s)" << endl << endl;
+out:	
+	cout << endl << "Done Uniform Cost Search with " << goal->distance << " cost(s)" << endl << endl;
 	} // End of Uniform Cost
 	
 	void greedyBestFirst(Node* goal){
