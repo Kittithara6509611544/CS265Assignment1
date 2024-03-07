@@ -32,11 +32,6 @@ public:
 	static bool comparatorForNode(const Node* a, const Node* b) {
     	return a->name > b->name;
 	}
-	struct comp4PQueue{
-		bool operator()(const adjacent &a, const adjacent &b){
-		return a.weight > b.weight;
-		}
-	};
 	struct comp4PQueueDist{
 		bool operator()(const adjacent &a, const adjacent &b){
 		return a.node->distance > b.node->distance;
@@ -103,7 +98,7 @@ public:
     	cout << this->name;
     	while(next != goal){
     		next = queue.front();
-    		auto back = &queue.back();
+    		Node** back = &queue.back();
     		cout << " -> " << queue.front()->name;
     		queue.pop();
     		visited.push_back(next->name);
